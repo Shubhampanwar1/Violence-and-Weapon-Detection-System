@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Violence Detection System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        
+        <aside class="sidebar">
+            <div class="logo">
+                <h1>SVWDS</h1>
+            </div>
+            <div class="incident-logs">
+                <h2>INCIDENT LOGS</h2>
+                <div class="log-entries">
+                    <div class="log-entry high-alert">
+                        <span class="time">12:43 PM</span>
+                        <span class="threat">KNIFE DETECTED(temp.)</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header>
+                <div class="header-left">
+                    <h1>Real-Time Violence & Weapon Detection</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-profile">
+                        <span class="user-name">Admin</span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="live-streams">
+                <div class="live-header">
+                    <h2>SYSTEM LIVE FEED</h2>
+                </div>
+
+                <div class="single-camera-container">
+                    <div class="camera-card active-alert">
+                        <h3>Webcam / CCTV Source</h3>
+                        <div class="stream-view">
+                            <img src="images/cam_feed.png" alt="Live Camera Feed">
+                            
+                            <div class="alert-overlay">
+                                <div class="critical-text">ALERT: WEAPON DETECTED</div>
+                            </div>
+                            
+                            <div class="detection-box weapon" style="top: 30%; left: 40%; width: 150px; height: 150px;">
+                                <span class="label">HANDGUN 85%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
