@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel AI - Surveillance Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+
+        <nav class="navbar">
+            <div class="brand-logo">
+                <h1>Sentinel AI</h1>
+                <span class="status-indicator dot-red" id="global-status-dot"></span>
+                <p id="global-status-text">Connecting...</p>
+            </div>
+            
+            <div class="camera-controls">
+                <label for="camera-source">Source:</label>
+                <select id="camera-source">
+                    <option value="webcam">Laptop WebCam</option>
+                    <option value="usb">USB Camera 1</option>
+                    <option value="rtsp">CCTV (RTSP Stream)</option>
+                </select>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <section class="video-section">
+                <h2>Live Vision Panel</h2>
+                <div class="video-frame">
+                    <img class="video-feed" src="{{ url_for('video_feed') }}" alt="Live Sentinel AI Feed" width="640" height="480">
+                    <div class="overlay-stats">
+                    </div>
+                </div>
+            </section>
+
+            <section class="data-section">
+                
+                <div class="card modules-card">
+                    <h3>Active Deep Learning Modules</h3>
+                    <ul style="list-style-type: none; padding: 0;">
+                        <li><span id="yolo-dot" class="module-dot dot-red"></span> YOLOv8 (Weapon Detection)</li>
+                        <li><span id="mp-dot" class="module-dot dot-red"></span> MediaPipe (Pose Estimation)</li>
+                    </ul>
+                </div>
+
+                <div class="card alert-log-card">
+                    <h3>Real-Time Alert Log</h3>
+                    <div class="log-container" id="alert-logs">
+                        <div class="alert-item threat-weapon">
+                            <ul id="real-time-logs" style="list-style-type: none; padding: 0;">
+                                <li style="color: gray;">Awaiting system alerts...</li>
+                            </ul>
+                        </div>
+                        <div class="alert-item threat-violence">
+                            <span class="timestamp">[14:28:10]</span>
+                            <span class="threat-type">Aggressive Motion</span>
+                            <span class="confidence">92%</span>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
