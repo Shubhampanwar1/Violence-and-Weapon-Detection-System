@@ -1,10 +1,10 @@
 import cv2
 import math
-import winsound  # Built-in Windows library for sound
+import winsound 
 from ultralytics import YOLO
 
 print("Model Loading.......")
-# 1. Load your newly trained custom brain
+# Load your newly trained custom brain
 model_path = r"runs\detect\train\weights\best.pt"
 model = YOLO(model_path)
 
@@ -12,7 +12,7 @@ print("Model loaded succefully..")
 # Extract the dynamic dictionary of classes directly from the model
 classNames = model.names 
 
-# 2. Open the camera
+# Opening camera
 cap = cv2.VideoCapture(0)
 
 print("Sentinel AI Active. Beep enabled for Handgun and Knife detection.")
@@ -21,14 +21,11 @@ while True:
     ret, frame = cap.read()
     if not ret:
         break
-
-    # 3. The Forward Pass
+        
     results = model(frame, stream=True)
 
     # Track if a threat is found in THIS specific frame
     threat_detected = False
-
-    # 4. Extract mathematical geometry
     for r in results:
         boxes = r.boxes
         for box in boxes:
@@ -49,20 +46,17 @@ while True:
                 else:
                     box_color = (0, 255, 0) # Green
                 
-                # 5. Drawing
+                # Drawing boxes
                 cv2.rectangle(frame, (x1, y1), (x2, y2), box_color, 3)
                 label_text = f"{current_class} {confidence}"
                 cv2.putText(frame, label_text, (x1, y1 - 10), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.7, box_color, 2)
 
-    # 6. Audio Logic: The "Bippp" Sound
+    # Beep sound when threat detect
     if threat_detected:
-        # winsound.Beep(Frequency_in_Hz, Duration_in_ms)
-        # 1000Hz is a standard alert pitch, 200ms is a short "bipp"
-        # We use Beep for a simple tone, or PlaySound for a .wav file
         winsound.Beep(1000, 200)
 
-    # 7. Render
+    # Render
     cv2.imshow("Sentinel AI - Real Time Alert System", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
