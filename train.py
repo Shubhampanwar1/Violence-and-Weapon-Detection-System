@@ -8,7 +8,7 @@ if __name__ == '__main__':
     print("Initiating Sentinel AI Training Sequence...")
 
     results = model.train(
-        data='C:/Users/HP/OneDrive/Documents/Minor project/Detection System/weapon-detection-v1.v12i.yolov8/data.yaml', # UPDATE THIS PATH
+        data='C:/Users/HP/OneDrive/Documents/Minor project/Detection System/weapon-detection-v1.v12i.yolov8/data.yaml',
         epochs=50, 
         imgsz=640, 
         batch=16, 
