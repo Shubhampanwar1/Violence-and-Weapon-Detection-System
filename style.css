@@ -1,0 +1,152 @@
+/* --- Global Reset --- */
+/* This resets default browser margins so our design is consistent across all browsers */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* --- Main Variables & Body --- */
+body {
+    background-color: #0f172a; /* Deep dark blue/gray for security theme */
+    color: #f8fafc; /* Off-white text for readability */
+}
+
+.dashboard-container {
+    display: flex; /* Flexbox is a layout module to align items easily */
+    flex-direction: column;
+    height: 100vh; /* 100% of the Viewport Height */
+    padding: 20px;
+}
+
+/* --- Top Navigation Bar --- */
+.navbar {
+    display: flex;
+    justify-content: space-between; /* Pushes logo to left, controls to right */
+    align-items: center; /* Vertically centers items */
+    background-color: #1e293b;
+    padding: 15px 25px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #334155;
+}
+
+.brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.status-indicator {
+    width: 12px;
+    height: 12px;
+    background-color: #10b981; /* Emerald green */
+    border-radius: 50%; /* Makes the square div a perfect circle */
+    box-shadow: 0 0 10px #10b981; /* Adds a glowing effect */
+}
+
+.camera-controls select {
+    background-color: #0f172a;
+    color: white;
+    padding: 8px 12px;
+    border: 1px solid #334155;
+    border-radius: 4px;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+/* --- Main Content Grid --- */
+.main-content {
+    display: grid; /* CSS Grid allows us to create column layouts easily */
+    grid-template-columns: 2fr 1fr; /* Left column takes 2 parts, right takes 1 part */
+    gap: 20px;
+    height: 100%;
+}
+
+/* --- Left Column: Video Section --- */
+.video-section h2 {
+    margin-bottom: 10px;
+    font-size: 1.2rem;
+    color: #94a3b8;
+}
+
+.video-frame {
+    position: relative; /* Allows us to position the overlay exactly inside this box */
+    width: 100%;
+    height: 85%;
+    background-color: #000;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #334155;
+}
+
+#live-camera {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the video fills the box without stretching */
+}
+
+.overlay-stats {
+    position: absolute; /* Positions this box relative to .video-frame */
+    top: 10px;
+    left: 10px;
+    background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+/* --- Right Column: Data Cards --- */
+.card {
+    background-color: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #334155;
+    padding-bottom: 10px;
+}
+
+.modules-card ul {
+    list-style: none; /* Removes default bullet points */
+    line-height: 1.8;
+}
+
+/* --- Alert Log Section --- */
+.alert-log-card {
+    display: flex;
+    flex-direction: column;
+    height: 60%; 
+}
+
+.log-container {
+    flex-grow: 1;
+    overflow-y: auto; /* Adds a scrollbar if there are too many logs */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.alert-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 4px;
+    background-color: rgba(239, 68, 68, 0.1); /* Light red tint */
+    border-left: 4px solid #ef4444; /* Solid red line on the left */
+    font-size: 0.9rem;
+}
+
+.alert-item.threat-weapon {
+    border-left-color: #ef4444; /* Red for weapons */
+}
+
+.alert-item.threat-violence {
+    border-left-color: #f59e0b; /* Orange/Yellow for violence */
+    background-color: rgba(245, 158, 11, 0.1);
+}
