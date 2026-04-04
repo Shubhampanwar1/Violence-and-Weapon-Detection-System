@@ -15,6 +15,10 @@
                 <span class="status-indicator dot-red" id="global-status-dot"></span>
                 <p id="global-status-text">Connecting...</p>
             </div>
+
+            <div style="margin-left: 15px;">
+                <a href="/history" style="background-color: #ef4444; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; font-weight: bold;">View Evidence Locker</a>
+            </div>
             
             <div class="camera-controls">
                 <label for="camera-source">Source:</label>
@@ -51,14 +55,15 @@
                     <h3>Real-Time Alert Log</h3>
                     <div class="log-container" id="alert-logs">
                         <div class="alert-item threat-weapon">
-                            <ul id="real-time-logs" style="list-style-type: none; padding: 0;">
-                                <li style="color: gray;">Awaiting system alerts...</li>
+                            <ul id="weapon-logs" style="list-style-type: none; padding: 0; width: 100%;">
+                                <li style="color: gray;">Awaiting weapon alerts...</li>
                             </ul>
                         </div>
+                        
                         <div class="alert-item threat-violence">
-                            <span class="timestamp">[14:28:10]</span>
-                            <span class="threat-type">Aggressive Motion</span>
-                            <span class="confidence">92%</span>
+                            <ul id="violence-logs" style="list-style-type: none; padding: 0; width: 100%;">
+                                <li style="color: gray;">Awaiting violence alerts...</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -66,6 +71,7 @@
             </section>
         </main>
     </div>
+    <audio id="alert-sound" src="{{ url_for('static', filename='alert.mp3') }}" preload="auto"></audio>
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
