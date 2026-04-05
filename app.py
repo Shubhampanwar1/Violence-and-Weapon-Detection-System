@@ -5,14 +5,13 @@ import time
 import sqlite3
 import os
 import winsound
-import threading
 from flask import Flask, render_template, Response, jsonify
 from ultralytics import YOLO
 
 app = Flask(__name__)
 
 # ==========================================
-# SYSTEM SETUP & DATABASE
+# SYSTEM & DATABASE SETUP
 # ==========================================
 os.makedirs('static/evidence', exist_ok=True)
 
@@ -36,18 +35,16 @@ def save_evidence(threat_type, confidence, frame):
     filename = f"ev_{threat_type.replace(' ', '_')}_{file_time}.jpg"
     filepath = os.path.join('static', 'evidence', filename)
     
-    # Save image
     cv2.imwrite(filepath, frame)
     
-    # Save DB record
     conn = sqlite3.connect('sentinel.db')
     c = conn.cursor()
     c.execute("INSERT INTO alerts (timestamp, threat_type, confidence, image_path) VALUES (?, ?, ?, ?)",
               (display_time, threat_type, str(confidence), filename))
     
-    # Delete old images to protect hard drive
     c.execute("SELECT image_path FROM alerts WHERE id NOT IN (SELECT id FROM alerts ORDER BY id DESC LIMIT 50)")
     old_records = c.fetchall()
+    
     for record in old_records:
         old_file = os.path.join('static', 'evidence', record[0])
         if os.path.exists(old_file):
@@ -57,21 +54,15 @@ def save_evidence(threat_type, confidence, frame):
     conn.commit()
     conn.close()
 
-# ==========================================
-# HARDWARE ALARM SYSTEM
-# ==========================================
 def trigger_alarm():
-    # Plays a high-pitched 2500Hz beep for 1000ms (1 second) directly from the laptop
-    winsound.Beep(2500, 1000)
+    winsound.PlaySound("SystemHand", winsound.SND_ALIAS | winsound.SND_ASYNC)
 
 # ==========================================
-# LOAD AI ENGINES
+# LOAD AI MODELS
 # ==========================================
-print("Loading Stream A: Weapon Detection...")
+print("Loading Sentinel AI Engines...")
 weapon_model = YOLO(r"runs\detect\train\weights\best.pt")
 classNames = weapon_model.names 
-
-print("Loading Stream B: Pose Kinematics...")
 pose_model = YOLO("yolov8n-pose.pt") 
 
 alert_logs = []
@@ -82,8 +73,10 @@ def generate_frames():
     
     pTime = time.time()
     prev_people = []
+    
     last_violence_save = 0
     last_weapon_save = 0
+    last_alarm_time = 0 
 
     while True:
         success, frame = cap.read()
@@ -92,13 +85,13 @@ def generate_frames():
         cTime = time.time()
         time_elapsed = cTime - pTime
         pTime = cTime
+        safe_time = max(time_elapsed, 0.033) 
 
         # ==========================================
-        # STREAM B: BODY-CENTRIC KINEMATICS
+        # ENGINE 1: BODY-CENTRIC KINEMATICS
         # ==========================================
         pose_results = pose_model(frame, stream=True, verbose=False)
         current_people = []
-        safe_time = max(time_elapsed, 0.033) 
         
         for r in pose_results:
             frame = r.plot(boxes=False) 
@@ -136,43 +129,35 @@ def generate_frames():
                     rw_c, rw_p = curr['rw'], closest_person['rw']
                     nose_c, nose_p = curr['nose'], closest_person['nose']
 
-                    # FILTER 1: OUT OF FRAME (0,0)
                     lw_visible = (lw_c[0] > 0 and lw_c[1] > 0) and (lw_p[0] > 0 and lw_p[1] > 0)
                     rw_visible = (rw_c[0] > 0 and rw_c[1] > 0) and (rw_p[0] > 0 and rw_p[1] > 0)
 
                     lw_raw_dist = math.hypot(lw_c[0] - lw_p[0], lw_c[1] - lw_p[1]) if lw_visible else 0
                     rw_raw_dist = math.hypot(rw_c[0] - rw_p[0], rw_c[1] - rw_p[1]) if rw_visible else 0
 
-                    # FILTER 2: THE TELEPORTATION GLITCH
                     if lw_raw_dist > (curr['sw'] * 1.5): lw_visible = False
                     if rw_raw_dist > (curr['sw'] * 1.5): rw_visible = False
 
-                    # BODY-CENTRIC THRUST MATH
                     lw_ext_c = math.hypot(lw_c[0] - nose_c[0], lw_c[1] - nose_c[1]) if lw_visible else 0
                     rw_ext_c = math.hypot(rw_c[0] - nose_c[0], rw_c[1] - nose_c[1]) if rw_visible else 0
-                    
                     lw_ext_p = math.hypot(lw_p[0] - nose_p[0], lw_p[1] - nose_p[1]) if lw_visible else 0
                     rw_ext_p = math.hypot(rw_p[0] - nose_p[0], rw_p[1] - nose_p[1]) if rw_visible else 0
                     
                     lw_thrust = lw_ext_c - lw_ext_p
                     rw_thrust = rw_ext_c - rw_ext_p
                     
-                    # FILTER 4: Y-AXIS (No Waving)
                     lw_below_face = lw_c[1] > nose_c[1]
                     rw_below_face = rw_c[1] > nose_c[1]
                     
-                    # THE ULTIMATE STRIKE RULE
                     valid_lw_strike = lw_visible and (lw_thrust > 30) and (lw_ext_c > (curr['sw'] * 0.8)) and lw_below_face
                     valid_rw_strike = rw_visible and (rw_thrust > 30) and (rw_ext_c > (curr['sw'] * 0.8)) and rw_below_face
 
-                    if not valid_lw_strike and not valid_rw_strike:
-                        continue 
+                    if not valid_lw_strike and not valid_rw_strike: continue 
 
                     lw_speed = (lw_thrust / curr['sw']) / safe_time if valid_lw_strike else 0
                     rw_speed = (rw_thrust / curr['sw']) / safe_time if valid_rw_strike else 0
                     max_speed = max(lw_speed, rw_speed)
                     
-                    # STRICT THRESHOLD
                     if max_speed > 8.5: 
                         timestamp = datetime.datetime.now().strftime("%H:%M:%S")
                         log_msg = {"type": "violence", "text": f"[{timestamp}] Aggressive Motion"}
@@ -183,17 +168,19 @@ def generate_frames():
                         
                         cv2.putText(frame, "THREAT: AGGRESSIVE MOTION", (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
                         
-                        # TRIGGER EVIDENCE AND ALARM
+                        if cTime - last_alarm_time > 0.2:
+                            trigger_alarm() 
+                            last_alarm_time = cTime
+                            
                         if cTime - last_violence_save > 3:
                             save_evidence("Violence", "High", frame)
                             last_violence_save = cTime
-                            threading.Thread(target=trigger_alarm).start()
                         break
 
         prev_people = current_people
 
         # ==========================================
-        # STREAM A: WEAPON DETECTION
+        # ENGINE 2: WEAPON DETECTION
         # ==========================================
         weapon_results = weapon_model(frame, stream=True, verbose=False)
         
@@ -215,11 +202,13 @@ def generate_frames():
                             alert_logs.insert(0, log_msg) 
                             if len(alert_logs) > 5: alert_logs.pop()
                         
-                        # TRIGGER EVIDENCE AND ALARM
+                        if cTime - last_alarm_time > 0.2:
+                            trigger_alarm()
+                            last_alarm_time = cTime
+                        
                         if cTime - last_weapon_save > 3:
                             save_evidence(current_class.capitalize(), f"{int(confidence*100)}%", frame)
                             last_weapon_save = cTime
-                            threading.Thread(target=trigger_alarm).start()
                     else:
                         box_color = (0, 255, 0)
                     
@@ -229,9 +218,8 @@ def generate_frames():
         ret, buffer = cv2.imencode('.jpg', frame)
         yield (b'--frame\r\nContent-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
 
-
 # ==========================================
-# WEB ROUTES
+# API ENDPOINTS & ROUTES
 # ==========================================
 @app.route('/')
 def index():

@@ -1,4 +1,3 @@
-/* --- Global Reset --- */
 * {
     margin: 0;
     padding: 0;
@@ -6,7 +5,6 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* --- Main Variables & Body --- */
 body {
     background-color: #0f172a;
     color: #f8fafc; 
@@ -23,7 +21,7 @@ body {
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    transition: all 0.3s ease; /* Smooth color transitions */
+    transition: all 0.3s ease; 
 }
 
 .module-dot {
@@ -39,6 +37,7 @@ body {
     background-color: #10b981; 
     box-shadow: 0 0 10px #10b981; 
 }
+
 .dot-red { 
     background-color: #ef4444; 
     box-shadow: 0 0 10px #ef4444; 
@@ -53,7 +52,6 @@ body {
     background-color: #000; 
 }
 
-/* --- Top Navigation Bar --- */
 .navbar {
     display: flex;
     justify-content: space-between; 
@@ -71,14 +69,6 @@ body {
     gap: 15px;
 }
 
-.status-indicator {
-    width: 12px;
-    height: 12px;
-    background-color: #10b981; /* Emerald green */
-    border-radius: 50%; 
-    box-shadow: 0 0 10px #10b981; /* Adds a glowing effect */
-}
-
 .camera-controls select {
     background-color: #0f172a;
     color: white;
@@ -89,7 +79,6 @@ body {
     cursor: pointer;
 }
 
-/* --- Main Content Grid --- */
 .main-content {
     display: grid; 
     grid-template-columns: 2fr 1fr;
@@ -97,7 +86,6 @@ body {
     height: 100%;
 }
 
-/* --- Left Column: Video Section --- */
 .video-section h2 {
     margin-bottom: 10px;
     font-size: 1.2rem;
@@ -105,7 +93,7 @@ body {
 }
 
 .video-frame {
-    position: relative; /* Allows us to position the overlay exactly inside this box */
+    position: relative; 
     width: 100%;
     height: 85%;
     background-color: #000;
@@ -114,23 +102,16 @@ body {
     border: 2px solid #334155;
 }
 
-#live-camera {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the video fills the box without stretching */
-}
-
 .overlay-stats {
-    position: absolute; /* Positions this box relative to .video-frame */
+    position: absolute; 
     top: 10px;
     left: 10px;
-    background-color: rgba(0, 0, 0, 0.7); /* Black with 70% opacity */
+    background-color: rgba(0, 0, 0, 0.7); 
     padding: 5px 10px;
     border-radius: 4px;
     font-size: 0.9rem;
 }
 
-/* --- Right Column: Data Cards --- */
 .card {
     background-color: #1e293b;
     border: 1px solid #334155;
@@ -146,11 +127,10 @@ body {
 }
 
 .modules-card ul {
-    list-style: none; /* Removes default bullet points */
+    list-style: none; 
     line-height: 1.8;
 }
 
-/* --- Alert Log Section --- */
 .alert-log-card {
     display: flex;
     flex-direction: column;
@@ -159,7 +139,7 @@ body {
 
 .log-container {
     flex-grow: 1;
-    overflow-y: auto; /* Adds a scrollbar if there are too many logs */
+    overflow-y: auto; 
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -170,16 +150,16 @@ body {
     justify-content: space-between;
     padding: 12px;
     border-radius: 4px;
-    background-color: rgba(239, 68, 68, 0.1); /* Light red tint */
-    border-left: 4px solid #ef4444; /* Solid red line on the left */
+    background-color: rgba(239, 68, 68, 0.1); 
+    border-left: 4px solid #ef4444; 
     font-size: 0.9rem;
 }
 
 .alert-item.threat-weapon {
-    border-left-color: #ef4444; /* Red for weapons */
+    border-left-color: #ef4444; 
 }
 
 .alert-item.threat-violence {
-    border-left-color: #f59e0b; /* Orange/Yellow for violence */
+    border-left-color: #f59e0b; 
     background-color: rgba(245, 158, 11, 0.1);
 }
